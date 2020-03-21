@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: alertmanager
+  name: alertmanager
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: alertmanager
+    spec:
+      containers:
+      - name: alertmanager
+        image: prom/alertmanager:v0.19.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9093
+        args:
+        - --config.file=/etc/alertmanager/alertmanager.yml
+        volumeMounts:
+        - name: alertmanager-volume
+          mountPath: /alertmanager
+        - name: alertmanager-config
+          mountPath: /etc/alertmanager
+      volumes:
+      - name: alertmanager-volume
+        persistentVolumeClaim:
+          claimName: auto-alertmanager-disk0
+      - name: alertmanager-config
+        configMap:
+          name: alertmanager-config

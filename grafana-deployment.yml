@@ -36,11 +36,11 @@ spec:
             cpu: 100m
             memory: 100Mi
         volumeMounts:
-        - mountPath: /var/lib/grafana
-          name: data
+        - name: data
+          mountPath: /var/lib/grafana
       restartPolicy: Always
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
-      - emptyDir: {}
-        name: data
+      - name: data
+        emptyDir: {}
