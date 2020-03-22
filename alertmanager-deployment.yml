@@ -1,3 +1,17 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: alertmanager-claim
+  labels:
+    app: alertmanager
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,7 +42,7 @@ spec:
         ports:
         - containerPort: 9093
         args:
-        - --config.file=/etc/alertmanager/alertmanager.yml
+        - -config.file=/etc/alertmanager/alertmanager.yml
         volumeMounts:
         - name: alertmanager-volume
           mountPath: /alertmanager
@@ -37,7 +51,7 @@ spec:
       volumes:
       - name: alertmanager-volume
         persistentVolumeClaim:
-          claimName: auto-alertmanager-disk0
+          claimName: alertmanager-claim
       - name: alertmanager-config
         configMap:
           name: alertmanager-config
